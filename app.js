@@ -5,6 +5,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const graphqlHTTP = require('express-graphql')
+const {schema, root} = require('./graphql/schema')
 
 /* =======================
     LOAD THE CONFIG
@@ -32,9 +34,6 @@ app.get('/', (req, res) => {
     res.send('Hello JWT')
 })
 
-// configure api router
-app.use('/api', require('./routes/api'))
-
 // open the server
 app.listen(port, () => {
     console.log(`Express is running on port ${port}`)
@@ -46,6 +45,14 @@ app.listen(port, () => {
 mongoose.connect(config.mongodbUri)
 const db = mongoose.connection
 db.on('error', console.error)
-db.once('open', ()=>{
+db.once('open', () => {
     console.log('connected to mongodb server')
 })
+
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+}))
+
+app.listen(4000, () => console.log('Now browse to localhost:4000/graphql'))

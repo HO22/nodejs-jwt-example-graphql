@@ -1,0 +1,19 @@
+type User{
+    username: String!
+    password: String!
+    admin: Boolean!
+}
+
+input CreateUserInput{
+    username: String!
+    password: String!
+    admin: Boolean!
+}
+
+type Query {
+    posts: [User!]!
+}
+
+type Mutation {
+    createUser(in: CreateUserInput!): User!
+}
